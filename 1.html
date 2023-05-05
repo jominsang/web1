@@ -1,19 +1,126 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <title>WEB1 - html</title>
-  <meta charset="utf-8">
+	<title>자동차 게임</title>
+	<style>
+		body {
+			background-image: url("https://images.unsplash.com/photo-1623176035122-4e07bc19bab7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80");
+			background-size: cover;
+		}
+		#car {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 200px;
+			height: 200px;
+background-image: url("https://an2-img.amz.wtchn.net/image/v2/Ciw_TFVAE9Zd8azTEdXQhw.png?jwt=ZXlKaGJHY2lPaUpJVXpJMU5pSjkuZXlKd0lqb2lMM1l5TDNOMGIzSmxMM1ZwYldGblpTOHhOamd6TWpjNE1ETTJOVFl3TlRjMk5UQTRJbjAuZDNFNU81ajZyaTl4WmJhcE5lQzFoUS14N29aY3lhTFBRSnhyQURxRHl5TQ&ts=1683278042	");
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+		}
+		#obstacle {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			background-image: url("https://www.pngplay.com/wp-content/uploads/2/Meteor-Transparent-Free-PNG.png");
+			transform: translate(-50%, -50%);
+			width: 200px;
+			height: 200px;
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+		}
+	</style>
 </head>
 <body>
-  <h1><a href="index.html">양정훈의 비밀</a></h1>
-  <ol>
-    <li><a href="1.html">양정훈의 사생활</a></li>
-    <li><a href="2.html">양정훈의 은밀한 유혹</a></li>
-    <li><a href="3.html">게이란</a></li>
-  </ol>
-  <h2>HTML</h2>
-  <p>
-    그의 사생활은 온통 남자 관계 
-  </p>
+	<audio autoplay loop>
+			<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+			Your browser does not support the audio element.
+		</audio>
+	<div id="car"></div>
+	<div id="obstacle"></div>
+	<script>
+		let car = document.getElementById("car");
+		let x = window.innerWidth / 2 - car.offsetWidth / 2;
+		let y = window.innerHeight / 1 - car.offsetHeight / 1;
+		car.style.top = y + "px";
+		car.style.left = x + "px";
+
+    let obstacle = document.getElementById("obstacle");
+		let obstacleY = 0;
+		let obstacleSpeed = 2;
+
+		function moveObstacle() {
+			obstacleY += obstacleSpeed;
+			if (obstacleY > window.innerHeight) {
+				obstacleY = 0;
+				let obstacleX = Math.random() * (window.innerWidth - obstacle.offsetWidth);
+				obstacle.style.top = obstacleY + "px";
+				obstacle.style.left = obstacleX + "px";
+			}
+			obstacle.style.top = obstacleY + "px";
+		}
+
+		function isCollide(car, obstacle) {
+	    let carRect = car.getBoundingClientRect();
+	    let obstacleRect = obstacle.getBoundingClientRect();
+	    return !(
+	        (carRect.bottom - 90 < obstacleRect.top) ||
+	        (carRect.top + 90 > obstacleRect.bottom) ||
+	        (carRect.right - 90 < obstacleRect.left) ||
+	        (carRect.left + 90 > obstacleRect.right)
+	    );
+	}
+
+		let intervalId = setInterval(function() {
+			moveObstacle();
+			if (isCollide(car, obstacle)) {
+				clearInterval(intervalId);
+				alert("게임 오버!");
+				window.location.reload();
+			}
+		}, 10);
+
+		document.addEventListener("keydown", function(event) {
+			if (event.key == "ArrowUp") {
+				y -= 30;
+			} else if (event.key == "ArrowDown") {
+				y += 30;
+			} else if (event.key == "ArrowLeft") {
+				x -= 30;
+			} else if (event.key == "ArrowRight") {
+				x += 30;
+			}
+			car.style.top = y + "px";
+			car.style.left = x + "px";
+		});
+		let touchStartX = 0;
+		let touchStartY = 0;
+
+		document.addEventListener("touchstart", function (event) {
+			touchStartX = event.touches[0].clientX;
+			touchStartY = event.touches[0].clientY;
+		});
+
+		document.addEventListener("touchmove", function (event) {
+			event.preventDefault(); // 이벤트 기본 동작 방지
+			let touchCurrentX = event.touches[0].clientX;
+			let touchCurrentY = event.touches[0].clientY;
+			let deltaX = touchCurrentX - touchStartX;
+			let deltaY = touchCurrentY - touchStartY;
+			x += deltaX;
+			y += deltaY;
+			car.style.top = y + "px";
+			car.style.left = x + "px";
+			touchStartX = touchCurrentX;
+			touchStartY = touchCurrentY;
+		});
+
+		document.addEventListener("touchend", function (event) {
+			touchStartX = 0;
+			touchStartY = 0;
+		});
+	</script>
 </body>
 </html>
